@@ -1,7 +1,6 @@
 require('dotenv').config();
 const axios = require('axios');
 const { sendMessageFor } = require('simple-telegram-message')
-const sendMessage = sendMessageFor(process.env.TOKEN);
 
 const url = process.env.API_URL;
 const IDS_TELEGRAM = process.env.USERS_IDS;
@@ -37,7 +36,8 @@ async function calcularColorYDiferencia(ultimaConexion, sucursal) {
         try {
             for (const userId of userIds) {
                 if (userId) {
-                    await sendMessage(userId, mensaje);
+                    let sendMessage = sendMessageFor(process.env.TOKEN, userId);
+                    await sendMessage(mensaje);
                 }
             }
         } catch (error) {
@@ -47,20 +47,21 @@ async function calcularColorYDiferencia(ultimaConexion, sucursal) {
 }
 
 async function init() {
-    
-    for (const userId of userIds) {
-        console.log(userId);
-        try {
-            await sendMessage(userId, "EL BOTFE INICIADO PARA NOTIFICAR");
-        } catch (error) {
-            console.error(`Error al enviar el mensaje al usuario`, error.message);
+    try {
+        for (const userId of userIds) {
+            if (userId) {
+                let sendMessage = sendMessageFor(process.env.TOKEN, userId);
+                await sendMessage('El agente está en ejecución y hará un request cada minuto');
+            }
         }
+    } catch (error) {
+        console.error(`Error al enviar el mensaje al usuario`, error.message);
     }
 
 
 }
 
 init();
-setInterval(hacerRequest, 6000);
+setInterval(hacerRequest, 60000);
 
 console.log('El agente está en ejecución y hará un request cada minuto.');
