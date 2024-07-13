@@ -62,6 +62,6 @@ async function init() {
 }
 
 init();
-setInterval(hacerRequest, 60000);
+setInterval(hacerRequest, 300000);
 
-console.log('El agente está en ejecución y hará un request cada minuto.');
+console.log('El agente está en ejecución y hará un request cada 5 minuto.');
