@@ -47,3 +47,9 @@ async function calcularColorYDiferencia(ultimaConexion, sucursal) {
 setInterval(hacerRequest, 60000);
 
 console.log('El agente está en ejecución y hará un request cada minuto.');
+const userIds = process.env.USERS_IDS.split(",");
+const sendMessage = sendMessageFor(process.env.TOKEN);
+
+for (const userId of userIds) {
+    await sendMessage(userId, "EL BOTFE INICIADO PARA NOTIFICAR");
+}
