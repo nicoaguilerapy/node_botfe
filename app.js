@@ -1,8 +1,11 @@
 require('dotenv').config();
 const axios = require('axios');
 const { sendMessageFor } = require('simple-telegram-message')
+const sendMessage = sendMessageFor(process.env.TOKEN);
 
 const url = process.env.API_URL;
+const IDS_TELEGRAM = process.env.USERS_IDS;
+const userIds = IDS_TELEGRAM.split(",");
 
 // Función para hacer el request y procesar la respuesta
 async function hacerRequest() {
@@ -32,35 +35,32 @@ async function calcularColorYDiferencia(ultimaConexion, sucursal) {
         let mensaje = `${sucursal.empresa_nombre}\nSucursal: ${sucursal.sucursal_nombre}\nDiferencia en minutos: ${diferenciaEnMinutos}`;
         console.log(mensaje);
         try {
-            const userIds = process.env.USERS_IDS.split(",");
-            const sendMessage = sendMessageFor(process.env.TOKEN);
-
             for (const userId of userIds) {
-                await sendMessage(userId, mensaje);
+                if (userId) {
+                    await sendMessage(userId, mensaje);
+                }
             }
         } catch (error) {
-            console.error(`Error al enviar el mensaje al usuario ${userId}:`, error.message);
+            console.error(`Error al enviar el mensaje al usuario`, error.message);
         }
     }
 }
 
 async function init() {
-    const userIds = process.env.USERS_IDS.split(",");
-    const sendMessageInit = sendMessageFor(process.env.TOKEN);
-
+    
     for (const userId of userIds) {
         console.log(userId);
         try {
-            await sendMessageInit(userId, "EL BOTFE INICIADO PARA NOTIFICAR");
+            await sendMessage(userId, "EL BOTFE INICIADO PARA NOTIFICAR");
         } catch (error) {
-            console.error(`Error al enviar el mensaje al usuario ${userId}:`, error.message);
+            console.error(`Error al enviar el mensaje al usuario`, error.message);
         }
     }
 
 
 }
 
-// Ejecuta la función cada minuto
-setInterval(hacerRequest, 60000);
 init();
+setInterval(hacerRequest, 6000);
+
 console.log('El agente está en ejecución y hará un request cada minuto.');
