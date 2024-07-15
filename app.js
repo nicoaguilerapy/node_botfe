@@ -8,7 +8,6 @@ const userIds = IDS_TELEGRAM.split(",");
 
 // Función para hacer el request y procesar la respuesta
 async function hacerRequest() {
-    console.log('El agente está en ejecución y hará un request cada minuto.');
     try {
         let response = await axios.get(url);
         let datos = response.data;
@@ -30,14 +29,15 @@ async function calcularColorYDiferencia(ultimaConexion, sucursal) {
     let fechaConexion = new Date(ultimaConexion);
     let diferenciaEnMilisegundos = fechaActual - fechaConexion;
     let diferenciaEnMinutos = Math.floor(diferenciaEnMilisegundos / 60000);
+    let mensaje = `${sucursal.empresa_nombre}\nSucursal: ${sucursal.sucursal_nombre}\nDiferencia en minutos: ${diferenciaEnMinutos}`;
+    console.log(mensaje);
     if (diferenciaEnMinutos > 60) {
-        let mensaje = `${sucursal.empresa_nombre}\nSucursal: ${sucursal.sucursal_nombre}\nDiferencia en minutos: ${diferenciaEnMinutos}`;
-        console.log(mensaje);
         try {
             for (const userId of userIds) {
                 if (userId) {
                     let sendMessage = sendMessageFor(process.env.TOKEN, userId);
                     await sendMessage(mensaje);
+                    console.log("Mensaje enviado...");
                 }
             }
         } catch (error) {
@@ -62,6 +62,6 @@ async function init() {
 }
 
 init();
-setInterval(hacerRequest, 3000);
+setInterval(hacerRequest, 300000);
 
 console.log('El agente está en ejecución y hará un request cada 5 minuto.');
